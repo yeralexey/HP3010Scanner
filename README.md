@@ -1,3 +1,5 @@
+by Alexey Yerin
+
 # HP3010Scanner
 This project, HP3010Scanner, is an inheritance of the hp3900-series project, originally created by Jonathan Bravo Lopez. The purpose of this project is to build upon the work done in hp3900-series, enhancing its functionality and features.
 

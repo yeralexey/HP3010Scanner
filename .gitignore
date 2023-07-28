@@ -1,3 +1,13 @@
+# Folders
+/log
+/bin
+
+# Tempfiles
+**/tempfile
+
+# Images
+*.tiff
+
 # Prerequisites
 *.d
 

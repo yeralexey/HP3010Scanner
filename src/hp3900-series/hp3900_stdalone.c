@@ -154,9 +154,35 @@ static struct st_convert  cnv;
 
 static st_device *device = NULL;
 
+/*----------First modified area begin----------*/
+#include <stdio.h>
+#include <stdlib.h>
+#include <termios.h>
+#include <unistd.h>
+
+void waitForAnyKey() {
+    struct termios old_tio, new_tio;
+    tcgetattr(STDIN_FILENO, &old_tio);
+    new_tio = old_tio;
+    new_tio.c_lflag &= (~ICANON & ~ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &new_tio);
+    getchar();
+    tcsetattr(STDIN_FILENO, TCSANOW, &old_tio);
+}
+/*----------First modified area end---------*/
+
 /* main function */
 int main(SANE_Int argc, char *argv[])
 {
+	/*----------Second area modified begin----------*/
+	
+	/* Add a message to prompt the user to press any key */
+	printf("Press any key to continue...");
+
+    /* Wait for any key to be pressed */
+    waitForAnyKey();
+	/*----------Second area modified end----------*/
+
 	int rst = SANE_STATUS_INVAL;
 	struct params data;
 
