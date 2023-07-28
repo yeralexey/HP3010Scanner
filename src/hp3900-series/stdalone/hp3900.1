@@ -1,0 +1,171 @@
+.TH HP3900 "1" "January 2009" "hp3900 0.13" "User Commands"
+.SH NAME
+hp3900 \- manual page for hp3900
+.SH SYNOPSIS
+.B hp3900
+[\fIOPTIONS\fR]
+.SH DESCRIPTION
+\fBhp3900\fR is an stand-alone application to manage scanners controlled by Realtek RTS8822 chipset. It provides access at least to the following scanners:
+.PP
+.RS
+.ft CR
+.nf
+Model:                     Chipset:
+------                     --------
+HP ScanJet 3800            RTS8822BL-03A
+HP ScanJet 3970            RTS8822L-01H
+HP ScanJet 4070 Photosmart RTS8822L-01H
+HP ScanJet 4370            RTS8822L-02A
+HP ScanJet G2710           RTS8822BL-03A
+HP ScanJet G3010           RTS8822L-02A
+HP ScanJet G3110           RTS8822L-02A
+UMAX Astra 4900/4950       RTS8822L-01H *
+BenQ 5550                  RTS8823L-01E *
+.fi
+.ft R
+.RE
+.PP
+.SH OPTIONS
+.TP
+\fB\-\-about\fR
+shows application header.
+.TP
+\fB\-\-help\fR
+shows information about usual arguments that a normal user should need to use the scanner.
+.TP
+\fB\-\-help\-debug\fR
+shows information about arguments used in debugging process.
+.TP
+\fB\-\-devs\fR
+show devices recognized by this controller and which bus and device ID use.
+.TP
+\fB\-\-bus\fR <\fInum\fR>
+sets device's usb bus number. This data can be taken from information returned in "--devs" argument. If controller can not find any device in given bus:dev, it will try to connect to the first available device found.
+.TP
+\fB\-\-dev\fR <\fInum\fR>
+sets usb device number. This data can be taken from information returned in "--devs" argument. If controller can not find any device in given bus:dev, it will try to connect to the first available device found.
+.TP
+\fB\-\-chipset\fR
+Shows chipset model id and name.
+.TP
+\fB\-\-scancount\fR
+Shows the number of scans made by scanner.
+.TP
+\fB\-\-type\fR <\fInum\fR>
+sets scan type. Should be the first argument because it will override prior arguments concerning to scanning coords and resolution. Posible values are: 1 Normal or Reflective scans (by default), 2 Slide scans, 3 Negative scans.
+.TP
+\fB\-\-color\fR <\fInum\fR>
+sets scan color. Posible values are: 0 : Colour (default), 1 : Gray, 2 : Lineart, 3 ; Emulated Gray.
+.TP
+\fB\-\-threshold\fR <\fInum\fR>
+sets threshold in lineart mode. Posible values are from 0 to 255. By default 128 is used.
+.TP
+\fB\-\-negative\fR
+image colours will be inverted. In negative scans, this will be done by default. Setting this option in negative scans will return a positive image.
+.TP
+\fB\-\-gamma\fR <\fInum\fR>
+sets gamma correction of three colour channels. Posible values are between 0.30 and 9.00. By default, 1.00 value is used.
+.TP
+\fB\-\-gammar\fR <\fInum\fR>
+sets gamma correction in red colour channel.
+.TP
+\fB\-\-gammag\fR <\fInum\fR>
+sets gamma correction in green colour channel.
+.TP
+\fB\-\-gammab\fR <\fInum\fR>
+sets gamma correction in blue colour channel.
+.TP
+\fB\-\-gamma-off\fR
+disables gamma correction.
+.TP
+\fB\-\-nowarmup\fR
+scanner starts without warmup process.
+.TP
+\fB\-\-inches\fR
+sets coordinates using inches unit instead of milimiters. This option must be set before setting coordinates.
+.TP
+\fB\-\-left\fR <\fInum\fR>
+sets image left coord. See \fBCONSTRAINS\fR section.
+.TP
+\fB\-\-width\fR <\fInum\fR>
+sets image width to scan. See \fBCONSTRAINS\fR section.
+.TP
+\fB\-\-top\fR <\fInum\fR>
+sets image top coord. See \fBCONSTRAINS\fR section.
+.TP
+\fB\-\-height\fR <\fInum\fR>
+sets image heigth to scan. See \fBCONSTRAINS\fR section.
+.TP
+\fB\-\-depth\fR <\fInum\fR>
+sets image depth. Posible values are: 8 and 16. By default, 8 bits mode is used.
+.TP
+\fB\-\-res\fR <\fInum\fR>
+sets image horizontal and vertical resolution. Default resolution is 100 dpi
+.TP
+\fB\-\-resx\fR <\fInum\fR>
+sets image horizontal resolution
+.TP
+\fB\-\-resy\fR <\fInum\fR>
+sets image vertical resolution
+.TP
+\fB\-\-file\fR <\fIpath\fR>
+path where saving scanned image. Image is saved in TIFF format. By default file name is './image.tiff'
+.TP
+\fB\-\-verbose\fR 
+Shows scanning status messages.
+.SH DEBUGGING OPTIONS
+Next options have debugging purposes and should be used with caution:
+.TP
+\fB\-\-buttons\fR
+lets to test devices's buttons.
+.TP
+\fB\-\-chipset-reset\fR
+resets chipset data.
+.TP
+\fB\-\-debug\fR <\fIlevel\fR>
+shows debugging messages. Posible level values are: 0 Only errors (by default), 1 Equal to verbose mode, 2 Functions and parameters, 3 USB ctl transfers and 4 USB bulk transfers. Caution: Level 4 may create huge logs (about 40 MB in preview scans).
+.TP
+\fB\-\-gamma-off\fR
+Disables gamma correction.
+.TP
+\fB\-\-disablefixedpwm\fR
+disables fixed pulse-width modulation.
+.TP
+\fB\-\-dmabs\fR <\fIsize\fR>
+sets DMA buffer size.
+.TP
+\fB\-\-dmasl\fR <\flength\fR>
+sets DMA length.
+.TP
+\fB\-\-dmats\fR <\fIsize\fR>
+sets DMA transfer size.
+.TP
+\fB\-\-dumpshadingdata\fR
+Creates shading files.
+.TP
+\fB\-\-nowshading\fR
+Disables white shading correction.
+.TP
+\fB\-\-model\fR <\fInum\fR>
+lets to test device behaviour with other supported models. Posible values are: 0 HP3970, 1 HP4070, 2 HP4370, 3 UA4900, 4 HP3800, 5: HPG3010, 6 BQ5550, 7 HPG2710, 8 HPG3110.
+.TP
+\fB\-\-odtflb\fR <\fIsecs\fR>
+sets Overdrive time in seconds for reflective lamp. Default 10.
+.TP
+\fB\-\-odttma\fR <\fIsecs\fR>
+sets Overdrive time in seconds for TMA lamp. Default 10.
+.TP
+\fB\-\-real-depth\fR
+if gamma is enabled, scans are always done in 16 bits depth and then converted to the selected depth (default 8) to improve image quality. To avoid depth emulation, use this argument.
+.TP
+\fB\-\-savecalibfile\fR
+saves all images taken in calibration process.
+.TP
+\fB\-\-scanwhiteboard\fR
+scans the calibration area located beyond the top of image.
+.SH CONSTRAINS
+There are physical constrains that user should know when setting image coords. HP3970 and HP4070 scanners area has 220 milimeters width (8.7 inches) and 300 milimeters height (11,8 inches). Despite application checks given coords, user shouldn't set bigger values than those constrains to avoid damages in the scanner's motor.
+.SH BUGS
+This application is still in alpha development status. So some given options may not work properly. This version has no calibration implemented so image will be a bit dark. In the other way, there is some code to debug in windows driver so application is not completed.
+.SH AUTHOR
+This manual page was written by Jonathan Bravo Lopez <jkdsoft@gmail.com>

@@ -1,0 +1,21 @@
+If you read this README, you are getting a developing version of
+hp3900-series backend. To make this project installable and
+compilable use "pack.sh" script in this way:
+
+./pack.sh -c
+
+This command will create a compressed file in your home directory
+named: hp3900-series.tar.bz2
+
+Go to your home directory and uncompress that file:
+
+cd ~
+tar xfj hp3900-series.tar.bz2
+
+cd hp3900-series-*
+
+And that's all. You can use scripts available to update, compile and
+install latest backend version.
+
+Jonathan Bravo Lopez <jkdsoft@gmail.com>
+

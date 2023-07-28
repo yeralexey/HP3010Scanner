@@ -1,0 +1,34 @@
+# udev rules file for hp3900 backend supported USB devices
+#
+# To add a USB device, add a rule to the list below between the
+# ENV{DEVTYPE}!=... and LABEL="libsane_rules_end" lines.
+#
+# To run a script when your device is plugged in, add RUN+="/path/to/script"
+# to the appropriate rule.
+#
+# The following list already contains a lot of scanners.
+
+ACTION!="add", GOTO="hp3900_rules_end"
+ENV{DEVTYPE}!="usb_device", GOTO="hp3900_rules_end"
+
+# Hewlett-Packard ScanJet 3800
+ATTR{idVendor}=="03f0", ATTR{idProduct}=="2605", MODE="0664", GROUP="scanner"
+# Hewlett-Packard ScanJet 3970
+ATTR{idVendor}=="03f0", ATTR{idProduct}=="2305", MODE="0664", GROUP="scanner"
+# Hewlett-Packard ScanJet 4070 Photosmart
+ATTR{idVendor}=="03f0", ATTR{idProduct}=="2405", MODE="0664", GROUP="scanner"
+# Hewlett-Packard ScanJet 4370
+ATTR{idVendor}=="03f0", ATTR{idProduct}=="4105", MODE="0664", GROUP="scanner"
+# Hewlett-Packard ScanJet G2710
+ATTR{idVendor}=="03f0", ATTR{idProduct}=="2805", MODE="0664", GROUP="scanner"
+# Hewlett-Packard ScanJet G3010
+ATTR{idVendor}=="03f0", ATTR{idProduct}=="4205", MODE="0664", GROUP="scanner"
+# Hewlett-Packard ScanJet G3110
+ATTR{idVendor}=="03f0", ATTR{idProduct}=="4305", MODE="0664", GROUP="scanner"
+# BenQ 5550
+ATTR{idVendor}=="04a5", ATTR{idProduct}=="2211", MODE="0664", GROUP="scanner"
+# UMAX Astra 4900
+ATTR{idVendor}=="06dc", ATTR{idProduct}=="0020", MODE="0664", GROUP="scanner"
+
+LABEL="hp3900_rules_end"
+

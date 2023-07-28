@@ -1,0 +1,51 @@
+Author : Jonathan Bravo Lopez <jkdsoft@gmail.com>
+Title  : RTS8822L-1H USB protocol
+Version: 25.08.2006
+
+Request Request  WValue    WValue   WIndex Windex Wlength  Wlength  Description
+ type             (L)        (H)      (L)    (H)    (L)      (H)
+------- ------- --------- --------- ------ ------ -------- -------- -----------
+  C0      XX    Address_L Address_H   00     01   Length_L Length_H Get Register
+  40      XX    Address_L Address_H   00     00   Length_L Length_H Set Register
+  40      XX       00        00       01     08      00       00    Reset Entire Chip
+  40      XX       00        00       00     08      00       00    Reset DMA
+  40      XX       00        00       00     06      00       00    Cancel DMA
+  40      XX     DMACS       00       00     04      06       00    Enable DMA (Read)
+                                                                    Data: HAA[2:0]
+                                                                    DMADL[0:2]
+  40      XX     DMACS       00       01     04      06       00    Enable DMA (Write)
+                                                                    Data: HAA[2:0]
+                                                                    DMADL[0:2]
+  C0      XX    Address_L Address_H   00     02   Length_L Length_H Get Serial EEPROM
+  40      XX    Address_L Address_H   00     02   Length_L Length_H Set Serial EEPROM
+  C0      XX       00        00       00     07      01        00   Get USB Speed Configuration
+  40      XX    Address_L Address_H   00     09      01        00   Set Controller?s FSR
+  C0      XX    Address_L Address_H   00     09      01        00   Get Controller?s FSR
+  40      XX       00        00       00     0A   Length_L Length_H Set UART (Data)
+  C0      XX       00        00       00     08   Length_L Length_H Get UART (Data)
+
+Basically, writing commands (PC to device) use request type 0x40 and reading commands use 0xc0.
+Windows driver allways uses 0x04 as request.
+
+Reading and writing DMA
+-----------------------
+Enabling DMA for reading or writing operations requires a buffer of six bytes size.
+First three bytes have unknown purposes. It's important to know its purpose because
+its widely used when setting some calibration tables like shading correction. When
+setting gamma tables, these bytes are 0x00.
+
+The other three bytes contain the buffer size to transfer, divided by two (words count).
+Then, data is transferred using a bulk command.
+
+DMACS values:
+------------
+0x0000 : For gamma calibration
+0x0004 : For unknown calibration tables
+0x0008 : For image reading buffer size notification (Read)
+0x0010 : (0) Red   \
+0x0011 : (1) Green - black shading tables = (channel color | 0x10) 
+0x0012 : (2) Blue  /
+0x0014 : (0) Red   \
+0x0015 : (1) Green - white shading tables = (channel color | 0x14)
+0x0016 : (2) Blue  /
+

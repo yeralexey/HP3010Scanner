@@ -1,0 +1,117 @@
+Doc     : Supporting status
+Author  : Jonathan Bravo Lopez
+Revision: 12.04.2007
+
+HP3900 driver supports some RTS8822 chipsets. But development is not completed
+so all involved scanners may have different supporting status. Next list shows
+current status of each known scanner:
+
+HP Scanjet 3800
+---------------
+* Sensor : CCD Toshiba TCD2905
+* Chipset: RTS8822BL-03A (Hardware resolutions 150, 300,  600, 1200, 2400)
+* Status:
+    o Resolutions: Supported resolutions lower than 1200dpi. 1200dpi doesn't
+                   finish and in 2400dpi header tries to go beyond the limit
+		   of area to scan.
+    o Calibration:
+        + Shading: Implementing (not supported yet)
+        + Gamma  : Emulated (Implemented but not used yet)
+    o Scan types:
+        + Reflective: Supported
+        + Slides    : Supported
+        + Negatives : Supported
+    o Color modes:
+        + Color  : Supported
+        + Gray   : Emulated (not supported yet)
+        + Lineart: Emulated (not supported yet)
+	
+
+
+HP Scanjet 3970
+---------------
+* Sensor : CCD Toshiba TCD2952
+* Chipset: RTS8822L-01H (Hardware resolutions 100, 200, 300,  600, 1200, 2400)
+* Status :
+    o Resolutions: All supported
+    o Calibration:
+        + Shading: Implementing (not supported yet)
+        + Gamma  : Emulated (Implemented but not used yet)
+    o Scan types:
+        + Reflective: Supported
+        + Slides    : Supported
+        + Negatives : Supported
+    o Color modes:
+        + Color  : Supported
+        + Gray   : Emulated (not supported yet)
+        + Lineart: Emulated (not supported yet)
+
+
+
+HP Scanjet 4070
+---------------
+* Sensor : CCD Toshiba TCD2952
+* Chipset: RTS8822L-01H (Hardware resolutions 100, 200, 300,  600, 1200, 2400)
+* Status :
+    o Resolutions: All supported
+    o Calibration:
+        + Shading: Implementing (not supported yet)
+        + Gamma  : Emulated (Implemented but not used yet)
+    o Scan types:
+        + Reflective: Supported
+        + Slides    : Supported
+        + Negatives : Supported
+    o Color modes:
+        + Color  : Supported
+        + Gray   : Emulated (not supported yet)
+        + Lineart: Emulated (not supported yet)
+
+
+
+HP Scanjet 4370
+---------------
+* Sensor : CCD Toshiba TCD2958
+* Chipset: RTS8822L-02A (Hardware resolutions 150, 300,  600, 1200, 2400, 4800)
+* Status :
+    o Resolutions: Supported ones lower than 1200. The others seem to have different line distances bettwen channel colors.
+    o Calibration:
+        + Shading: Implementing (not supported yet)
+        + Gamma  : Emulated (Implemented but not used yet)
+    o Scan types:
+        + Reflective: Supported
+        + Slides    : Supported
+        + Negatives : Supported
+    o Color modes:	
+        + Color  : Supported
+        + Gray   : Emulated (not supported yet)
+        + Lineart: Emulated (not supported yet)
+
+
+
+HP Scanjet G3010
+----------------
+* Sensor : CCD Toshiba TCD2958
+* Chipset: RTS8822L-02A (Hardware resolutions 150, 300,  600, 1200, 2400, 4800)
+* Status :
+    o Resolutions: Supported ones lower than 1200. The others seem to have different line distances bettwen channel colors.
+    o Calibration:
+        + Shading: Implementing (not supported yet)
+        + Gamma  : Emulated (Implemented but not used yet)
+    o Scan types:
+        + Reflective: Supported
+        + Slides    : Supported
+        + Negatives : Supported
+    o Color modes:
+        + Color  : Supported
+        + Gray   : Emulated (not supported yet)
+        + Lineart: Emulated (not supported yet)
+
+
+
+Umax Astra 4900/4950
+--------------------
+* Sensor : CIS Sony S575
+* Chipset: RTS8822L-01H (Hardware resolutions 100, 200, 300, 600, 1200)
+* Status : Developing. There are problems setting up CIS sensor so retrieved image is not correct.
+
+

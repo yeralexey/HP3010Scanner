@@ -1,0 +1,755 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>HP3900</class>
+<widget class="Dialog">
+    <property name="name">
+        <cstring>HP3900</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>452</width>
+            <height>342</height>
+        </rect>
+    </property>
+    <property name="sizePolicy">
+        <sizepolicy>
+            <hsizetype>5</hsizetype>
+            <vsizetype>5</vsizetype>
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+        </sizepolicy>
+    </property>
+    <property name="maximumSize">
+        <size>
+            <width>32767</width>
+            <height>32767</height>
+        </size>
+    </property>
+    <property name="baseSize">
+        <size>
+            <width>0</width>
+            <height>0</height>
+        </size>
+    </property>
+    <property name="caption">
+        <string>HP3900 series standalone GUI</string>
+    </property>
+    <property name="icon">
+        <pixmap>image0</pixmap>
+    </property>
+    <property name="associations" stdset="0">
+        <stringlist>
+            <string></string>
+            <string></string>
+            <string>rm -f /tmp/hp3900preview.tif</string>
+        </stringlist>
+    </property>
+    <widget class="ButtonGroup">
+        <property name="name">
+            <cstring>dpi</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>190</x>
+                <y>10</y>
+                <width>70</width>
+                <height>150</height>
+            </rect>
+        </property>
+        <property name="title">
+            <string>DPI</string>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string>@WidgetText</string>
+                <string></string>
+            </stringlist>
+        </property>
+        <widget class="RadioButton">
+            <property name="name">
+                <cstring>_150</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>60</y>
+                    <width>46</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>1&amp;50</string>
+            </property>
+            <property name="checked">
+                <bool>true</bool>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string></string>
+                    <string>--res 150</string>
+                </stringlist>
+            </property>
+        </widget>
+        <widget class="RadioButton">
+            <property name="name">
+                <cstring>_200</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>80</y>
+                    <width>46</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>&amp;200</string>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string></string>
+                    <string>--res 200</string>
+                </stringlist>
+            </property>
+        </widget>
+        <widget class="RadioButton">
+            <property name="name">
+                <cstring>_300</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>100</y>
+                    <width>46</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>&amp;300</string>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string></string>
+                    <string>--res 300</string>
+                </stringlist>
+            </property>
+        </widget>
+        <widget class="RadioButton">
+            <property name="name">
+                <cstring>_600</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>120</y>
+                    <width>46</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>&amp;600</string>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string></string>
+                    <string>--res 600</string>
+                </stringlist>
+            </property>
+        </widget>
+        <widget class="RadioButton">
+            <property name="name">
+                <cstring>_75</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>20</y>
+                    <width>40</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>&amp;75</string>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string></string>
+                    <string>--res 75</string>
+                </stringlist>
+            </property>
+        </widget>
+        <widget class="RadioButton">
+            <property name="name">
+                <cstring>_100</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>40</y>
+                    <width>46</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>1&amp;00</string>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string></string>
+                    <string>--res 100</string>
+                </stringlist>
+            </property>
+        </widget>
+    </widget>
+    <widget class="GroupBox">
+        <property name="name">
+            <cstring>salvar_para</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>20</x>
+                <y>200</y>
+                <width>410</width>
+                <height>60</height>
+            </rect>
+        </property>
+        <property name="title">
+            <string>Save to</string>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string>--file "@nomearq"</string>
+            </stringlist>
+        </property>
+        <widget class="FileSelector">
+            <property name="name">
+                <cstring>arquivo</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>30</y>
+                    <width>390</width>
+                    <height>21</height>
+                </rect>
+            </property>
+            <property name="populationText">
+                <string></string>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string>--file "@widgetText.tif"</string>
+                </stringlist>
+            </property>
+            <property name="buttonCaption" stdset="0">
+                <string>...</string>
+            </property>
+            <property name="selectionFilter">
+                <string>*.tif</string>
+            </property>
+            <property name="selectionCaption">
+                <string>Selecione arquivo</string>
+            </property>
+            <property name="selectionType">
+                <enum>Save</enum>
+            </property>
+        </widget>
+    </widget>
+    <widget class="CloseButton">
+        <property name="name">
+            <cstring>CloseButton1</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>330</x>
+                <y>280</y>
+                <width>101</width>
+                <height>41</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>E&amp;XIT</string>
+        </property>
+    </widget>
+    <widget class="ExecButton">
+        <property name="name">
+            <cstring>digitalizar</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>20</x>
+                <y>280</y>
+                <width>290</width>
+                <height>41</height>
+            </rect>
+        </property>
+        <property name="text">
+            <string>&amp;SCAN</string>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string>xterm -e "hp3900 @fonte @imagem @tamanho @dpi @prof @arquivo --verbose"</string>
+            </stringlist>
+        </property>
+    </widget>
+    <widget class="GroupBox">
+        <property name="name">
+            <cstring>tamanho</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>280</x>
+                <y>110</y>
+                <width>150</width>
+                <height>80</height>
+            </rect>
+        </property>
+        <property name="title">
+            <string>Size</string>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string>--width @largura --height @altura</string>
+            </stringlist>
+        </property>
+        <widget class="Label">
+            <property name="name">
+                <cstring>Label8_2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>114</x>
+                    <y>20</y>
+                    <width>30</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>mm</string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+        </widget>
+        <widget class="Label">
+            <property name="name">
+                <cstring>Label8_2_2</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>114</x>
+                    <y>50</y>
+                    <width>30</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>mm</string>
+            </property>
+            <property name="alignment">
+                <set>AlignCenter</set>
+            </property>
+        </widget>
+        <widget class="SpinBoxInt">
+            <property name="name">
+                <cstring>altura</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>60</x>
+                    <y>50</y>
+                    <width>50</width>
+                    <height>22</height>
+                </rect>
+            </property>
+            <property name="maxValue">
+                <number>299</number>
+            </property>
+            <property name="minValue">
+                <number>10</number>
+            </property>
+            <property name="value">
+                <number>297</number>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string>@widgetText</string>
+                </stringlist>
+            </property>
+        </widget>
+        <widget class="SpinBoxInt">
+            <property name="name">
+                <cstring>largura</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>60</x>
+                    <y>20</y>
+                    <width>50</width>
+                    <height>22</height>
+                </rect>
+            </property>
+            <property name="buttonSymbols">
+                <enum>UpDownArrows</enum>
+            </property>
+            <property name="maxValue">
+                <number>219</number>
+            </property>
+            <property name="minValue">
+                <number>10</number>
+            </property>
+            <property name="value">
+                <number>210</number>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string>@widgetText</string>
+                </stringlist>
+            </property>
+        </widget>
+        <widget class="Label">
+            <property name="name">
+                <cstring>Label8</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>20</y>
+                    <width>50</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Width</string>
+            </property>
+            <property name="alignment">
+                <set>AlignVCenter</set>
+            </property>
+        </widget>
+        <widget class="Label">
+            <property name="name">
+                <cstring>Label8_3</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>50</y>
+                    <width>50</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Height</string>
+            </property>
+            <property name="alignment">
+                <set>AlignVCenter</set>
+            </property>
+        </widget>
+    </widget>
+    <widget class="ButtonGroup">
+        <property name="name">
+            <cstring>imagem</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>20</x>
+                <y>10</y>
+                <width>150</width>
+                <height>120</height>
+            </rect>
+        </property>
+        <property name="paletteBackgroundColor">
+            <color>
+                <red>99</red>
+                <green>99</green>
+                <blue>99</blue>
+            </color>
+        </property>
+        <property name="title">
+            <string>Image</string>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string>@widgetText</string>
+                <string></string>
+            </stringlist>
+        </property>
+        <widget class="RadioButton">
+            <property name="name">
+                <cstring>colorido</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>20</y>
+                    <width>72</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>C&amp;olor</string>
+            </property>
+            <property name="checked">
+                <bool>true</bool>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string></string>
+                    <string>--color 0</string>
+                </stringlist>
+            </property>
+        </widget>
+        <widget class="RadioButton">
+            <property name="name">
+                <cstring>mono</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>60</y>
+                    <width>112</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Blac&amp;k &amp;&amp; Wite </string>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string></string>
+                    <string>--color 2</string>
+                </stringlist>
+            </property>
+        </widget>
+        <widget class="CheckBox">
+            <property name="name">
+                <cstring>invertida</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>90</y>
+                    <width>90</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>&amp;Invert Colors</string>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string>@null</string>
+                    <string></string>
+                    <string> --negative</string>
+                </stringlist>
+            </property>
+        </widget>
+        <widget class="RadioButton">
+            <property name="name">
+                <cstring>cinza</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>40</y>
+                    <width>120</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>Grays&amp;cale</string>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string></string>
+                    <string>--color 1</string>
+                </stringlist>
+            </property>
+        </widget>
+    </widget>
+    <widget class="ButtonGroup">
+        <property name="name">
+            <cstring>prof</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>20</x>
+                <y>140</y>
+                <width>150</width>
+                <height>50</height>
+            </rect>
+        </property>
+        <property name="paletteBackgroundColor">
+            <color>
+                <red>99</red>
+                <green>99</green>
+                <blue>99</blue>
+            </color>
+        </property>
+        <property name="frameShadow">
+            <enum>Raised</enum>
+        </property>
+        <property name="title">
+            <string>Color Depth</string>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string>@widgetText</string>
+                <string></string>
+            </stringlist>
+        </property>
+        <widget class="RadioButton">
+            <property name="name">
+                <cstring>_8bits</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>20</y>
+                    <width>60</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string> &amp;8 bits</string>
+            </property>
+            <property name="checked">
+                <bool>true</bool>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string></string>
+                    <string>--depth 8</string>
+                </stringlist>
+            </property>
+        </widget>
+        <widget class="RadioButton">
+            <property name="name">
+                <cstring>_16bits</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>80</x>
+                    <y>20</y>
+                    <width>60</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>&amp;16 bits</string>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string></string>
+                    <string>--depth 16</string>
+                </stringlist>
+            </property>
+        </widget>
+    </widget>
+    <widget class="ButtonGroup">
+        <property name="name">
+            <cstring>fonte</cstring>
+        </property>
+        <property name="geometry">
+            <rect>
+                <x>280</x>
+                <y>10</y>
+                <width>150</width>
+                <height>90</height>
+            </rect>
+        </property>
+        <property name="paletteBackgroundColor">
+            <color>
+                <red>99</red>
+                <green>99</green>
+                <blue>99</blue>
+            </color>
+        </property>
+        <property name="title">
+            <string>Source</string>
+        </property>
+        <property name="associations" stdset="0">
+            <stringlist>
+                <string>@widgetText</string>
+                <string></string>
+            </stringlist>
+        </property>
+        <widget class="RadioButton">
+            <property name="name">
+                <cstring>normal</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>20</y>
+                    <width>72</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>&amp;Flatbed</string>
+            </property>
+            <property name="checked">
+                <bool>true</bool>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string></string>
+                    <string>--type 1</string>
+                </stringlist>
+            </property>
+        </widget>
+        <widget class="RadioButton">
+            <property name="name">
+                <cstring>slide</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>40</y>
+                    <width>100</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>35 &amp;mm Slide</string>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string></string>
+                    <string>--type 2</string>
+                </stringlist>
+            </property>
+        </widget>
+        <widget class="RadioButton">
+            <property name="name">
+                <cstring>negativo</cstring>
+            </property>
+            <property name="geometry">
+                <rect>
+                    <x>10</x>
+                    <y>60</y>
+                    <width>112</width>
+                    <height>20</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>35 mm Ne&amp;gative</string>
+            </property>
+            <property name="associations" stdset="0">
+                <stringlist>
+                    <string></string>
+                    <string>--type 3</string>
+                </stringlist>
+            </property>
+        </widget>
+    </widget>
+</widget>
+<images>
+    <image name="image0">
+        <data format="XPM.GZ" length="3310">789c5596c76e1c490c86ef7a8a81793316f4848e58ec413987912d59d2620fd51534ca691417fbeecbfac919d9fd7b207c26bb02c962f5b7afbd9383ddded76f0b4f5337bdf03d3f718fbdafe1f9e6e6fdef7ffefa77e1cba0eae15fd31b7ef963e1cb78daf3bdbdbbdb98814980fa78c0bbe0220b7c050e599929829348fdf7320ff0800b709105ff43702d1a6576abe0260bf6c7cca352a4efbf80bb2cf8ef642eeaa22c6ad82fc06d16781decb2e0bf02eec48ef7f9d2b8339e807d16e62fc1a9086a779b994b2c08bc052e854bf08671a94c015c954589e03aaca7acb3309ffa3759b0af81db2cf03638883fe2cbc7e0587ab3a7cc5591059e82ab6a5055981ff1ac62e52a1d1ff1ac928f15f6c74799eba21ed5d80f7b6311de5fcadc54be4c6a47bc9bb691078cfd375de31ac497b1dec6cbff205e3452ee7cc47ee9c03844f8d39db2ef47d41b1d190fa3c6ff011c643c9daf03c72cd811cfb6ef9b84f8b2038fb2605f04d73e258dc73ed88551d2f1109fb6cb82fd1c9cd7a7f91b824318248d07e2db46dfe87a19f5d1a6d6ebfbfc6c2c827fa7eccba8e76339b3ebfb4ad9613e37cc82fd4339d449ebe33bb894f2d5fa5a520e4365ba351ed9fe8e8dab043b8fc1958ca0bc642c82bf8e5fcbf89adf4363b373301681757d39dd1abf77709b057e03e30123feaecb029f28fb226a3cf794434ceaff0a8e59b00f9483d7fd7195b9ebfbcee28f7876832cf050d9d7963facaf1bc5be8d8ffa93c33eecb45e6a6589b7c603fda12ba5bde8fa6e9443b07ac17abacacfea7943390e92d6cf3d58eacdeaf9a7721cdafb3a7e3e1ecaa7ca3ed878bbcab14e7adecfc0ad8f6ae73ed8cdd83d81bbe03b9d5fed72bc93e603f5dec52e747a9e707ebb1443d2fafc91d9e77a43fc08fdc7e778a07fd344391649df3f316e757cc27997eed0b7f150ff52dd95f9a35f4a36644aac07fdc037de793d0f69ce6a6f94653ead9716dcc6d2e27b615c195f1bd7e68ff324a38960f7caa18cda2f978d1bb393f27c7c37675d3f1bcfe67b316ecc8e7a976aec8c75fd3e1451fbcfa5f26c7d7466dc59fcd03f7d48038b1ff2e963b0fa65cd4ff29260d86be550597d5f294b3e74ff8837ae63cddfd87814f4fef3c64dd47a7f558eded68f7a0c03a90fad1fd4431866c1de1a4b0460477d873244edd70efd3ad42106bd1fbb1947bd3fd10f4213240360673cb3b371d2f118f511da2cd8c978e68ff31d7c1618fd290461edafafc6c1381847ebbfc8a7ac5604463e43cac27ef1bd12fb520fda5ff07d138759f0477e6321acdf3b5363eb6f0ef51acb388a78dfe17cc42a0bfee8dfb1ce821de70dd79b32fa49947ad77c3be43b7671167fd44bf45960f4ab88078cf391465960dcb7a9c8c278cad2fd94f9c17876ff60fed464211e95b1b3fe84ef0921a7fdd5e97c5e58f385fda5fc68bc6fe6acf18e7346bcc7532676dcb1e7c09193e89c277cc1977c359e8ea7e633e16bbee15bbee37b7e90df233ff154fe3e33cd7d5ec4faca6ffcce1fa6455e92f1167ff1215ee6155e95f73eb5ca6bbcfe3997786df0266f89b64d3bb2b615defdcd678ff7f980c77c68face3ff828cff48bcf31ffe4133ee533eecbef94073ce41117bff9945c71cd0db7248b2322471d790a9f3e1429d1394de8822ee98aaee9866ee98eeee9e1179f477aa2293dd30bbdd21bbdd3072dd2122dd3cae7de6995d6689d366893b6689b766897f6689f0e684c87739feff4838ee8987ed2099dd219f56940431a5141e53c86cb54514d8d7c54b1cb37bf5c4ed43869102ecd7cdcb99bb80b77e9aedcb5bb71b7eeceddbb07f7e89edc674e3bf7ec5e44afa237d1bbfb708b6ec92dbb95f938abbce1d6e4b7ee36a04dd196db763bd8d77f7f2efc0f2a4d153b</data>
+    </image>
+</images>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

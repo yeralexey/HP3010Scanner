@@ -1,0 +1,181 @@
+HP Scanjet 3900 series CHANGELOG
+================================
+
+16-05-2013: v0.13-SVN
+----------
+
+ - Fixed reference position detection for HP3800/HPG2710 scanners.
+ - Cleaned up code.
+ - Initial port to SANE 1.1.0 specs.
+ - Fixed warmup process.
+ - Implemented native adcGain and adcOffset calibration.
+ - Implemented native white/black shading calibration.
+ - Implemented native gamma correction.
+ - Implemented scans "preview mode".
+ - Added support for HP ScanJet G3110 (HPG3110).
+
+01-03-2008: v0.12
+----------
+
+ - Added --qbuttons argument to query the last button status or wait for
+   pressing button before exiting stand-alone application. Thanks to Ed K.
+ - tiffio.h library is now optional in SANE backend.
+ - Added support for a new scanner: HP ScanJet G2710 which is similar to
+   HP ScanJet 3800.
+ - Fixed initial tl_x and tl_y coords so "scanimage --test" passes test.
+ - INSTALL.sh script places driver both in /usr/lib and /usr/lib64 for
+   machines supporting such architecture.
+ - COMPILE.sh script cares about usb.h presence and notifies its absence.
+ - UPDATE.sh script updates installer scripts.
+ - Fixed grayscale emulation (broken when enabling grayscale support by chipset)
+ - Grayscale emulation now generates 1 channel per dot instead of three ones.
+ - COMPILE.sh script generates a log when compiling SANE's backend.
+
+21-12-2007: v0.11
+----------
+
+ - Fixed a bug that made slide/negative scans unusable.
+ - Changed area constrains in slide/negative scans.
+
+11-12-2007: v0.10
+----------
+
+ - Added INFO.sh script to provide information about project versions.
+ - Added PATCH.sh script to patch SANE sources by hand.
+ - Implemented emulation of white shading correction.
+ - Added option to disable white shading correction.
+ - Backend now checks whether chipset supports operations with eeprom.
+ - Added a simple GUI (hp3900.kmdr) for standalone application (uses
+   kmdr-executor) made by Bruno <brunomcl at users.sourceforge.net>
+ - Debugging functions moved from hp3900_rts8822.c to hp3900_debug.c
+ - Removed many global vars.
+ - Grayscale color mode is totally supported by hardware.
+ - Grayscale emulation is now optional. "--color 3" argument is added
+   in stand-alone application and "Emulate Grayscale" option in SANE.
+   Emulation remains as optional because sometimes converted image has
+   better quality than scanned one in real Grayscale mode.
+ - Debugging images created with option --savecalibfile are saved now
+   at user home ~/
+ - Added option in SANE backend to generate debugging images.
+ - As a debugging image, driver creates post-autoref.tiff which shows
+   colored lines about detected SER and LER values.
+ - Lineart scans generate 1 bit depth images.
+ - Fixed threshold limits for lineart scans in stand-alone app
+
+29.07.2007: v0.9
+----------
+
+ - Added support for scanner: HP ScanJet G3010 (similar to hp4370)
+ - Added initial support for scanner: BenQ 5550T (New chipset: RTS8823L-01E).
+ - Fixed bug related to stepper motor, programming smearing curves for
+   backtracking.
+ - Implemented algorithm to detect installed RAM type.
+ - Implemented a better code to read/write in DMA.
+ - Added some scripts for users, to update, compile and install sources.
+
+06.04.2007: v0.8
+----------
+
+ - Negative scans invert colours by default.
+ - Added --negative option in stand-alone application.
+ - Cleaned up sane interface and added some advanced options for debugging
+   purposes.
+ - Added --gamma-off to disable gamma correction.
+ - if gamma is enabled, scans are always made in 16 bits depth and then
+   converted to the selected depth (default 8) to improve image quality.
+   To avoid depth emulation, argument "--real-depth" is added.
+ - Added --buttons argument to test device's buttons.
+ - Fixed a problem when getting buttons' status.
+ - Rewrited hp3900_config.c to support other scanners in an easier way.
+ - Added configuration to support HP Scanjet 3800 (New chipset:RTS8822BL-03A).
+ - Fixed warmup process.
+ - Added --nowarmup argument to skip such proccess.
+ - Identified bits to enable/disable motor and to manage motor direction.
+ - Added buttons support like avision backend to work with KScannerButtons.
+ - Added --scancount argument to get the number of scans made by scanner in
+   standalone application.
+ - Added posibility to see information about device in sane version like
+   chipset name, chipset ID and number of scans made by scanner.
+ - It seems that using RTS8822BL-03A, both lamps can be switched on at the
+   same time being switched on when scanning slides. Identified the way it
+   works and fixed the problem.
+ - Sane version detects now whether TMA is attached or not when scanning
+   slides and negatives.
+
+09.10.2006: v0.7
+----------
+
+ - Identified some usb commands involved in DMA and EEPROM operations.
+ - Identified usb command to reset RTS8822 chipset.
+   Added option --chipset-reset
+ - Added option --help-debug to show debugging options
+ - Added support for HP ScanJet 4370 with resolutions lower than 1200. 
+ - Resolution 2400 works too for HP ScanJet 4370 (1200dpi still fails)
+ - Fixed bug when setting sensor timing values. This fix should improve image
+   quality in slide and negative scans.
+
+02.07.2006: v0.6
+----------
+
+ - Added option "--inches" in stand-alone application to let users set
+   coordinates in inches unit.
+ - Added option "--chipset" in stand-alone to show chipset's information.
+ - Application uses different scanning areas when scanning slides, depending
+   on device used (hp3970c or hp4070).
+ - Slide/negative process use the right lamp now.
+ - Cleaning up code.
+ - Identified register which manages scanner buttons' status.
+ - Some calibration functions implemented
+ - Fixed bug which generates bad images in lower resolutions after scanning
+   in 2400dpi.
+ - Adding some options for debugging purposes in stand-alone application.
+ 
+01.04.2006: v0.5
+----------
+ - Fixed bug when creating RGB triplet in 2400 dpi scanning process.
+ - Coordinates in stand-alone application must be given in milimiters.
+ - Implemented gamma correction, emulated in software.
+ - Implemented scanning in "Gray" color mode, emulated in software.
+ - Implemented scanning in "Lineart" mode, emulated in software.
+ - Stand-alone app saves scanned image in TIFF format now.
+ - Fixed scanning process in 16 bit depth.
+ - Set 8 bit depth by default in SANE backend due to Kooka doesn't support
+   16 bit depth.
+ - Scanner is detected now as "Hewlett-Packard RTS8822 chipset based flatbed
+   scanner" instead of "Hewlett-Packard HP39xx Flatbed Scanner"
+
+20.02.2006: v0.4
+----------
+ - Added functions to get/set scanner's gamma values.
+ - Added functions to resize image when selecting some non standard resolution.
+ - Fixed bug in stand-alone application when setting depth parameter.
+ - Fixed bug that crashes kooka application when making preview scans in 75 dpi.
+ - Fixed bug that crashes frontends when scanning in 2400 dpi due to memory fault.
+ - Improved sane_read function to read correctly image lines when maxlen is lower
+   than a line size.
+
+24.01.2006: v0.3
+----------
+ - Renamed .h files to .c files
+ - Improved color in scanned images
+ - Fixed all warnings when compiling as SANE backend
+ - Fixed all illegal symbols
+ - Reimplemented DBG function for debugging process in standalone application.
+ - Fixed a bug that crashes backend when scanning in 2400 dpi twice.
+ - README explains how to use scanner from a non root acount.
+ - More improvements in internal code.
+
+22.12.2005: v0.2
+----------
+ - Second release of standalone application
+ - First version available of a SANE backend
+ - Fixed Scan_Read_BufferA function to read image correctly
+ - Fixed lamp relocation prior to scan image
+ - Added a manual for standalone application
+ - Implemented hp3900_config.h to avoid using external config files to
+   program Realtek RTS8822l-01 chipset.
+ - Many internal bugs fixed
+
+17.10.2005: v0.1
+----------
+ First release of standalone application

@@ -1,0 +1,907 @@
+Author : Jonathan Bravo Lopez <jkdsoft@gmail.com>
+Title  : Realtek RTS8822 Registers
+Version: 10.07.2008
+
+KNOWN SCANNERS:
+
+Name              Chip           Sensor               Resolutions
+----              ----           ------               -----------
+HP ScanJet 3800 : RTS8822BL-03A: CCD Toshiba TCD2905: 150, 300, 600, 1200, 2400
+HP ScanJet G2710: RTS8822BL-03A: CCD Toshiba TCD2905: 150, 300, 600, 1200, 2400
+
+HP ScanJet 3970 : RTS8822L-01H : CCD Toshiba TCD2952: 100, 200, 300,  600, 1200, 2400
+HP ScanJet 4070 : RTS8822L-01H : CCD Toshiba TCD2952: 100, 200, 300,  600, 1200, 2400
+Umax Astra 4900 : RTS8822L-01H : CIS Sony      S575 : 100, 200, 300,  600, 1200
+Umax Astra 4950 : RTS8822L-01H : CIS Sony      S575 : 100, 200, 300,  600, 1200
+
+HP ScanJet 4370 : RTS8822L-02A : CCD Toshiba TCD2958: 150, 300, 600, 1200, 2400, 4800
+HP ScanJet G3010: RTS8822L-02A : CCD Toshiba TCD2958: 150, 300, 600, 1200, 2400, 4800
+HP ScanJet G3110: RTS8822L-02A : CCD Toshiba TCD2958: 150, 300, 600, 1200, 2400, 4800
+
+BenQ 5550       :*RTS8823L-01E : CCD ?              : 100, 150, 300,  600, 1200
+
+*RTS8823L-01E seems to be compatible with RTS8822
+
+
+ACCESSING DMA:
+
+Starts from USB address 0x0000
+Used to enable DMA for reading or writing operations. Data is transferred using Bulk.
+- 40 XX DMACS       00       00     04      06       00    Enable DMA (Read)
+- 40 XX DMACS       00       01     04      06       00    Enable DMA (Write)
+
+offset   bytes   bits
+------   -----   ----
+                     Big Endian        |(sizes) Little Endian
+0x000    0x06    47-40 | 39-32 | 31-24 | 23-16 | 15-8 | 7-0
+                   ?       ?       ?   | buffersize(bytes)/2
+                 For gamma calibration tables
+                 Also used for motor steps
+
+0x004    0x06    47-40 | 39-32 | 31-24 | 23-16 | 15-8 | 7-0
+                   ?       ?       ?   | buffersize(bytes)/2
+                 For unknown calibration tables
+
+0x008    0x06    47-40 | 39-32 | 31-24 | 23-16 | 15-8 | 7-0
+                   ?       ?       ?   | buffersize(bytes)/2
+                 For image reading buffer size notification (Read)
+
+0x010    0x06    47-40 | 39-32 | 31-24 | 23-16 | 15-8 | 7-0
+                   ?       ?       ?   | buffersize(bytes)/2
+                 For RED black shading tables
+
+0x011    0x06    47-40 | 39-32 | 31-24 | 23-16 | 15-8 | 7-0
+                   ?       ?       ?   | buffersize(bytes)/2
+                 For GREEN black shading tables
+
+0x012    0x06    47-40 | 39-32 | 31-24 | 23-16 | 15-8 | 7-0
+                   ?       ?       ?   | buffersize(bytes)/2
+                 For BLUE black shading tables
+
+0x014    0x06    47-40 | 39-32 | 31-24 | 23-16 | 15-8 | 7-0
+                   ?       ?       ?   | buffersize(bytes)/2
+                 For RED white shading tables
+
+0x015    0x06    47-40 | 39-32 | 31-24 | 23-16 | 15-8 | 7-0
+                   ?       ?       ?   | buffersize(bytes)/2
+                 For GREEN white shading tables
+
+0x016    0x06    47-40 | 39-32 | 31-24 | 23-16 | 15-8 | 7-0
+                   ?       ?       ?   | buffersize(bytes)/2
+                 For BLUE white shading tables
+
+
+ACCESSING EEPROM:
+
+Starts from USB address 0x0021
+Offset 0x21 = address 0x00 in EEPROM
+- Read : C0 XX Address_L Address_H   00 02   Length_L Length_H : Get Serial EEPROM
+- Write: 40 XX Address_L Address_H   00 02   Length_L Length_H : Set Serial EEPROM
+
+offset   bytes   bits
+------   -----   ----
+RTS8822L_03A and RTS8822L_02A:
+0x021    0x04    Number of scans made by scanner in msb format
+
+RTS8822L_01H:
+0x021    0x04    Number of scans made by scanner in lsb format
+
+0x06a    0x02    Left leading
+0x06c    0x02    Start pos
+0x06e    0x01    Some kind of crc check
+                 = (0x5a - (Left leading + Start pos)) & 0xff
+
+                 Scanning real area is bigger than the area that user can see.
+                 Left leading and Start pos define the real coordinates of the
+                 virtual origin (0,0)
+
+0x070    0x02    15 14 13 12 11 10 9 8 | 7-0
+                 bit[0..8]  = offset_red
+                 bit[9..15] = gain_red
+
+0x072    0x02    15 14 13 12 11 10 9 8 | 7-0
+                 bit[0..8]  = offset_green
+                 bit[9..15] = gain_green
+
+0x074    0x02    15 14 13 12 11 10 9 8 | 7-0
+                 bit[0..8]  = offset_blue
+                 bit[9..15] = gain_blue
+
+0x076    0x01    Some kind of crc check
+                 = (0x5b - (values of addresses 0x070+0x072+0x074)) & 0xff
+
+0x077    0x01    GainOffset counter
+                 It's increased in each scan. If its value >= 0x0f, driver
+                 calculates gain and offset again (addresses 0x70, 0x72 and 0x74)
+                 and this counter is set to 0
+
+0x078    0x01    AutoRef counter
+                 It's increased in each scan. If its value >= 0x0f, driver
+                 calculates refs (left leading and start pos) again and this
+                 counter is set to 0
+
+0x079    0x02    ?
+
+0x07b    0x01    7 6 5 4 3 2 1 0
+                 bit[0..6] = fixed pwm
+                 bit[7]    = 1:enable fixed pwm
+
+0x07c    ?       ?
+0x07d    ?       ?
+0x07e    ?       ?
+0x07f    ?       ?
+
+
+
+ACCESSING STATUS AND CONTROL REGISTERS
+
+Starts from USB address 0xe800
+- Read : C0 XX Address_L Address_H   00 01   Length_L Length_H : Get Register
+- Write: 40 XX Address_L Address_H   00 00   Length_L Length_H : Set Register
+
+offset   bytes   bits
+------   -----   ----
+0x000    0x01    7 6 5 4 3 2 1 0
+                 bit[0..3] = systemclock (0:08MHz  1:12MHz  2:16MHz  3:24MHz  4:48MHz  5:72MHz)
+                 bit[4]    = MLOCK
+                 bit[5]    = Setting this bit to 1 and then to 0, resets chipset
+                 bit[6]    = Setting this bit to 1 and then to 0, resets warm
+                 bit[7]    = execution bit.
+                             If 1, executing (see address 0x013, bit[6])
+
+0x001    0x01    7 6 5 4 3 2 1 0
+                 bit[0]    = ?
+                 bit[1]    = Driver sets 1 if bit[4] from 0xdf is 1
+                             (if has motorcurves) in Start_Scan function
+                 bit[2]    = ?
+                 bit[3]    = ?
+                 bit[4]    = "dummy scan"
+                             if 1, no image will be retrieved from scanner.
+                 bit[5..7] = ?
+
+0x002    0x01    7 6 5 4 3 2 1 0
+                 bit[0..7] = I don't see any change setting these bits. Use to be 0
+
+0x003    0x01    7 6 5 4 3 2 1 0
+                 bit[0..7] = I don't see any change setting these bits. Use to be 0
+
+0x004    0x01    7 6 5 4 3 2 1 0
+                 bit[0..7] = I don't see any change setting these bits. Use to be 0
+
+0x005    0x01    7 6 5 4 3 2 1 0
+                 bit[0..7] = I don't see any change setting these bits. Use to be 0
+
+0x006    0x01    7 6 5 4 3 2 1 0
+                 bit[0..7] = I don't see any change setting these bits. Use to be 0
+
+0x007    0x01    7 6 5 4 3 2 1 0
+                 bit[0..7] = I don't see any change setting these bits. Use to be 0
+
+0x008    0x01    7 6 5 4 3 2 1 0
+                 bit[0..7] = I don't see any change setting these bits. Use to be 0
+
+0x009    0x01    7 6 5 4 3 2 1 0
+                 bit[0..7] = I don't see any change setting these bits. Use to be 0
+
+0x00a    0x01    7 6 5 4 3 2 1 0
+                 bit[0..7] = I don't see any change setting these bits. Use to be 0
+
+0x00b    0x01    7 6 5 4 3 2 1 0
+                 bit[0..7] = I don't see any change setting these bits. Use to be 0
+
+0x00c    0x01    7 6 5 4 3 2 1 0
+                 bit[0..7] = I don't see any change setting these bits. Use to be 0
+
+0x00d    0x01    7 6 5 4 3 2 1 0
+                 bit[0..7] = I don't see any change setting these bits. Use to be 0
+
+0x00e    0x01    7 6 5 4 3 2 1 0
+                 bit[0..7] = I don't see any change setting these bits. Use to be 0
+
+0x00f    0x01    7 6 5 4 3 2 1 0
+                 bit[0..7] = I don't see any change setting these bits. Use to be 0
+
+0x010    0x01    7 6 5 4 3 2 1 0
+                 bit[0..4] = crvs
+                 bit[5]    = 1 enables/ 0 disables ccd
+                 bit[6]    = 1 enables/ 0 disables ccd channel 1
+                 bit[7]    = 1 enables/ 0 disables ccd channel 2
+                             See bit[7] from address 0x013
+
+0x011    0x01    7 6 5 4 3 2 1 0
+                 bit[0..5] = image quality increases when all bits are 1
+                 bit[6]    = image is a bit clearer when this bit is set to 1
+                 bit[7]    = sensor type; 0=CCD; 1=CIS
+
+0x012    0x01    7 6 5 4 3 2 1 0
+                 bit[0..5] = rgb channel order. 3 values of 2 bits size each one.
+                             Values are 1, 2 and 3, and each one represents a
+                             channel color.
+                             According to colormode it will use 1, 2 or 3 channels.
+                             Channel count is specified in bits[6..7]
+                 bit[6..7] = channels_per_dot. Posible values are:
+                             11  if Colormode = "Color"
+                             01  if samplerate = LINEAR_RATE and (Colormode <> "Color") = gray || lineart
+                             10  if samplerate = PIXEL_RATE and (Colormode <> "Color") = gray || lineart
+
+0x013    0x01    7 6 5 4 3 2 1 0
+                 bit[0..1] = Pre-Amplifier Gain [RED]
+                 bit[2..3] = Pre-Amplifier Gain [GREEN]
+                 bit[4..5] = Pre-Amplifier Gain [BLUE]
+                 bit[6]    = Used in Execute function. Driver sets this bit to 0
+                             before setting bit[6] from 0x0000 to 1.
+                             Then sets bit[6] from 0x0000 to 0 and sets this bit to 1 again.
+                             Finally sets bit[7] from 0x0000 and scanner begins to work.
+                 bit[7]    = 1 enable/ 0 disable ccd channel 3 . See address 0x010
+
+0x014    0x01    7 6 5 4 3 2 1 0
+                 bit[0..4] = Variable Gain Amplifier (vgag1) [CL_RED]
+                 bit[5..7] = vrts (Top Reference Voltage)
+
+0x015    0x01    7 6 5 4 3 2 1 0
+                 bit[0..4] = Variable Gain Amplifier (vgag1) [CL_GREEN]
+                 bit[5..7] = vrms (Middle Reference Voltage)
+
+0x016    0x01    7 6 5 4 3 2 1 0
+                 bit[0..4] = Variable Gain Amplifier (vgag1) [CL_BLUE]
+                 bit[5..7] = vrbs (Bottom Reference Voltage)
+
+0x017    0x01    7 6 5 4 3 2 1 0
+                 bit[0..4] = Variable Gain Amplifier (vgag2) [CL_RED]
+                 bit[5..7] = ?
+
+0x018    0x01    7 6 5 4 3 2 1 0
+                 bit[0..4] = Variable Gain Amplifier (vgag2) [CL_GREEN]
+                 bit[5..7] = ?
+
+0x019    0x01    7 6 5 4 3 2 1 0
+                 bit[0..4] = Variable Gain Amplifier (vgag2) [CL_BLUE]
+                 bit[5..7] = ?
+
+0x01a    0x01    Even Offset 1 (edcg1) [CL_RED] (8 lower bits) See address 0x01b
+
+0x01b    0x01    7 6 5 4 3 2 1 0
+                 bit[0..6] = Even Offset 2 (edcg2) [CL_RED]
+                 bit[7]    = bit[8] from Even Offset 1 [CL_RED]
+
+0x01c    0x01    Odd Offset 1 (odcg1) [CL_RED] (8 lower bits) See address 0x01d
+
+0x01d    0x01    7 6 5 4 3 2 1 0
+                 bit[0..6] = Odd Offset 2 (odcg2) [CL_RED]
+                 bit[7]    = bit[8] from Odd Offset 1 [CL_RED]
+
+0x01e    0x01    Even Offset 1 (edcg1) [CL_GREEN] (8 lower bits) See address 0x01f
+
+0x01f    0x01    7 6 5 4 3 2 1 0
+                 bit[0..6] = Even Offset 2 (odcg2) [CL_GREEN]
+                 bit[7]    = bit[8] from Even Offset 1 [CL_GREEN]
+
+0x020    0x01    Odd Offset 1 (odcg1) [CL_GREEN] (8 lower bits) See address 0x021
+
+0x021    0x01    7 6 5 4 3 2 1 0
+                 bit[0..6] = Odd Offset 2 (odcg2) [CL_GREEN]
+                 bit[7]    = bit[8] from Odd Offset 1 [CL_GREEN]
+
+0x022    0x01    Even Offset 1 (edcg1) [CL_BLUE] (8 lower bits) See address 0x023
+
+0x023    0x01    7 6 5 4 3 2 1 0
+                 bit[0..6] = Even Offset (edcg2) [CL_BLUE]
+                 bit[7]    = bit[8] from Even Offset 1 [CL_BLUE]
+
+0x024    0x01    Odd Offset 1 (odcg1) [CL_BLUE] (8 lower bits) See address 0x025
+
+0x025    0x01    7 6 5 4 3 2 1 0
+                 bit[0..6] = Odd Offset 2 (odcg2) [CL_BLUE]
+                 bit[7]    = bit[8] from Odd Offset 1 [CL_BLUE]
+
+0x029    0x02    if 0x00 first connection to scanner
+
+0x030    0x03    line exposure time (us unit)
+
+0x033    0x03    maximum exposure time [RED] (us unit)
+0x036    0x03    exposure time [RED] (us unit)
+
+0x039    0x03    maximum exposure time [GREEN] (us unit)
+0x03c    0x03    exposure time [GREEN] (us unit)
+
+0x03f    0x03    maximum exposure time [BLUE] (us unit)
+0x042    0x03    exposure time [BLUE] (us unit)
+
+0x045    0x01    7 6 5 4 3 2 1 0
+                 bit[0..4] = timing.cvtrfpw (CCD Line transfer)
+                 bit[5] = timing.cvtrp[2]
+                 bit[6] = timing.cvtrp[1]
+                 bit[7] = timing.cvtrp[0]
+
+0x046    0x01    7 6 5 4 3 2 1 0
+                 bit[0..4] = timing.cvtrbpw (CCD Line transfer)
+                 bit[5..7] = ?
+
+0x047    0x01    timing.cvtrw; (Linear image sensor transfer gate)
+
+0x048    0x05    39 38 37 36 35 34 33 32 | 31-24 | 23-16 | 15-8 | 7-0
+                 // 7-0=0x048 ; 39-32=0x04c
+                 (Linear Image Sensor Clock 1)
+                 bit[0..35] = timing.cph0p1
+                 bit[36]    = timing.cph0go
+                 bit[37]    = timing.cph0ge
+                 bit[38]    = timing.cph0ps
+                 bit[39]    = ?
+
+0x04d    0x05    39 38 37 36 35 34 33 32 | 31-24 | 23-16 | 15-8 | 7-0
+                 // 7-0=0x04d ; 39-32=0x051
+                 bit[0..35]  = timing.cph0p2
+                 bit[36..39] = ?
+
+0x052    0x05    39 38 37 36 35 34 33 32 | 31-24 | 23-16 | 15-8 | 7-0
+                 // 7-0=0x052 ; 39-32=0x056
+                 (Linear Image Sensor Clock 2)
+                 bit[0..35] = timing.cph1p1
+                 bit[36]    = timing.cph1go
+                 bit[37]    = timing.cph1ge
+                 bit[38]    = timing.cph1ps
+                 bit[39]    = ?
+
+0x057    0x05    39 38 37 36 35 34 33 32 | 31-24 | 23-16 | 15-8 | 7-0
+                 // 7-0=0x057 ; 39-32=0x05b
+                 bit[0..35]  = timing.cph1p2
+                 bit[36..39] = ?
+
+0x05c    0x05    39 38 37 36 35 34 33 32 | 31-24 | 23-16 | 15-8 | 7-0
+                 // 7-0=0x05c ; 39-32=0x060
+                 (Linear Image Sensor Clock 3)
+                 bit[0..35] = timing.cph2p1
+                 bit[36]    = timing.cph2go
+                 bit[37]    = timing.cph2ge
+                 bit[38]    = timing.cph2ps
+                 bit[39]    = ?
+
+0x061    0x05    39 38 37 36 35 34 33 32 | 31-24 | 23-16 | 15-8 | 7-0
+                 // 7-0=0x061 ; 39-32=0x065
+                 bit[0..35]  = timing.cph2p2
+                 bit[36..39] = ?
+
+0x066    0x05    39 38 37 36 35 34 33 32 | 31-24 | 23-16 | 15-8 | 7-0
+                 // 7-0=0x066 ; 39-32=0x06a
+                 (Linear Image Sensor Clock 4)
+                 bit[0..35] = timing.cph3p1
+                 bit[36]    = timing.cph3go
+                 bit[37]    = timing.cph3ge
+                 bit[38]    = timing.cph3ps
+                 bit[39]    = ?
+
+0x06b    0x05    39 38 37 36 35 34 33 32 | 31-24 | 23-16 | 15-8 | 7-0
+                 // 7-0=0x06b ; 39-32=0x06f
+                 bit[0..35]  = timing.cph3p2
+                 bit[36..39] = ?
+
+0x070    0x05    39 38 37 36 35 34 33 32 | 31-24 | 23-16 | 15-8 | 7-0
+                 // 7-0=0x070 ; 39-32=0x074
+                 (Linear Image Sensor Clock 5)
+                 bit[0..35] = timing.cph4p1
+                 bit[36]    = timing.cph4go
+                 bit[37]    = timing.cph4ge
+                 bit[38]    = timing.cph4ps
+                 bit[39]    = ?
+
+0x075    0x05    39 38 37 36 35 34 33 32 | 31-24 | 23-16 | 15-8 | 7-0
+                 // 7-0=0x075 ; 39-32=0x079
+                 bit[0..35]  = timing.cph4p2
+                 bit[36..39] = ?
+
+0x07a    0x05    39 38 37 36 35 34 33 32 | 31-24 | 23-16 | 15-8 | 7-0
+                 // 7-0=0x07a ; 39-32=0x07e
+                 (Linear Image Sensor Clock 6)
+                 bit[0..35] = timing.cph5p1
+                 bit[36]    = timing.cph5go
+                 bit[37]    = timing.cph5ge
+                 bit[38]    = timing.cph5ps
+                 bit[39]    = ?
+
+0x07f    0x05    39 38 37 36 35 34 33 32 | 31-24 | 23-16 | 15-8 | 7-0
+                 // 7-0=0x07f ; 39-32=0x083
+                 bit[0..35] = timing.cph5p2
+                 bit[36.39] = ?
+
+0x084    0x03    timing.cphbp2s
+0x087    0x03    timing.cphbp2e
+0x08a    0x03    timing.clamps
+
+0x08d    0x03    in RTS8822L-01H is timing.clampe
+                 in RTS8822L-02A it depends on selected resolution:
+                   (res == 4800dpi && sensor==CCD)? timing.cphbp2e : timing.clampe
+
+0x092    0x01    7 6 5 4 3 2 1 0  (Correlated-Double-Sample 1)
+                 bit[0..5] = timing.cdss1
+                 bit[6..7] = ?
+
+0x093    0x01    7 6 5 4 3 2 1 0
+                 bit[0..5] = timing.cdsc1 (uses to be cdss1 + 2)
+                 bit[6..7] = ?
+
+0x094    0x01    7 6 5 4 3 2 1 0  (Correlated-Double-Sample 2)
+                 bit[0..5] = timing.cdss2
+                 bit[6..7] = ?
+
+0x095    0x01    7 6 5 4 3 2 1 0
+                 bit[0..5] = timing.cdsc2 (uses to be cdss2 + 2)
+                 bit[6..7] = ?
+
+0x096    0x01    7 6 5 4 3 2 1 0
+                 bit[0..5] = timing.cnpp
+                 bit[6..7] = ?
+
+0x097    0x05    39 38 37 36 35 34 33 32 | 31-24 | 23-16 | 15-8 | 7-0
+                 // 7-0=0x097 ; 39-32=0x09b
+                 bit[0..35]  = timing.adcclkp1 (Analog to Digital Converter clock 1)
+                 bit[36..39] = ?
+
+0x09c    0x01    Set in scanners with CIS sensor
+
+0x09d    0x01    Set in scanners with CIS sensor
+
+0x09e    0x01    Set in scanners with CIS sensor
+
+0x09f    0x01    Set in scanners with CIS sensor
+
+0x0a0    0x01    Set in scanners with CIS sensor
+
+0x0a1    0x01    Set in scanners with CIS sensor
+
+0x0a2    0x01    Set in scanners with CIS sensor. Same purpose as 0x09c
+
+0x0a3    0x01    Set in scanners with CIS sensor. Same purpose as 0x09d
+
+0x0a4    0x01    Set in scanners with CIS sensor. Same purpose as 0x09e
+
+0x0a5    0x01    Set in scanners with CIS sensor. Same purpose as 0x09f
+
+0x0a6    0x01    Set in scanners with CIS sensor. Same purpose as 0x0a0
+
+0x0a7    0x01    Set in scanners with CIS sensor. Same purpose as 0x0a1
+
+0x0a8    0x01    Set in scanners with CIS sensor. Same purpose as 0x09c
+
+0x0a9    0x01    Set in scanners with CIS sensor. Same purpose as 0x09d
+
+0x0aa    0x01    Set in scanners with CIS sensor. Same purpose as 0x09e
+
+0x0ab    0x01    Set in scanners with CIS sensor. Same purpose as 0x09f
+
+0x0ac    0x01    Set in scanners with CIS sensor. Same purpose as 0x0a0
+
+0x0ad    0x01    Set in scanners with CIS sensor. Same purpose as 0x0a1
+
+0x0ae    0x01    7 6 5 4 3 2 1 0
+                 bit[0..5] = ?
+                 bit[6..7] = ?
+
+0x0af    0x01    7 6 5 4 3 2 1 0
+                 bit[0..2] = ?
+                 bit[3..7] = ?
+
+0x0b0    0x02    Scan coord Left (word)
+0x0b2    0x02    Scan coord Right (word)
+
+0x0c0    0x01    7 6 5 4 3 2 1 0
+                 bit[0..4] = resolution ratio = sensorresolution / resolution_x
+                 bit[5..7] = ?
+
+0x0c1    0x05    39 38 37 36 35 34 33 32 | 31-24 | 23-16 | 15-8 | 7-0
+                 // 7-0=0x0c1 ; 39-32=0x0c5
+                 bit[0..35]  = timing.adcclkp2 (Analog to Digital Converter clock 2)
+                 bit[36]     = bit[32]
+                 bit[37..39] = ?
+
+0x0d0    0x02    Scan coord Top (16 lower bits from a total size of 20 bits)
+                 See address 0x0d4
+
+0x0d2    0x02    Scan coord Down (16 lower bits from a total size of 20 bits)
+                 See address 0x0d4
+
+0x0d4    0x01    7 6 5 4 3 2 1 0
+                 bit[0..3] = 4 higher bits of Scan coordinate Top
+                 bit[4..7] = 4 higher bits of Scan coordinate Down
+
+0x0d5    0x01    ?
+
+0x0d6    0x01    7 6 5 4 3 2 1 0
+                 bit[0..3] = ?
+                 bit[4..7] = dummyline
+
+0x0d7    0x01    7 6 5 4 3 2 1 0
+                 bit[0..5] = motorpwmfrequency
+                 bit[6]    = ?
+                 bit[7]    = motor type:
+                             0: Output state machine
+                             1: On-Chip PWM
+
+0x0d8    0x01    7 6 5 4 3 2 1 0
+                 bit[0..5] = ?
+                 bit[6]    = (scantype == ST_NORMAL)? 0 : 1;
+                 bit[7]    = enable head movement
+                             if 0, scanning proccess will make without head movement
+
+0x0d9    0x01    7 6 5 4 3 2 1 0
+                 bit[0..1] = always 0 but doesn't seem to have any effect.
+                 bit[2]    = when is set to 1 it releases motor. Used before executing head
+                             movement to ensure that motor is not working.
+                 bit[3]    = same value as bit[7] but doesn't seem to have any effect.
+                 bit[4..6] = motor step type:
+                             0: full  (1  ) = 90    degrees
+                             1: half  (1/2) = 45    degrees
+                             2: quart (1/4) = 22.5  degrees
+                             3:       (1/8) = 11.25 degrees
+                 bit[7]    = Motor direction: 1=Forward ; 0=backward (to go home)
+
+0x0da    0x01    8 lower bits from msi. See address 0x0dd
+
+0x0db    0x01    8 lower bits from motorbackstep1 (a). See address 0x0dd
+
+0x0dc    0x01    8 lower bits from motorbackstep2 (b). See address 0x0dd
+
+0x0dd    0x01    7 6 5 4 3 2 1 0
+                 bit[0..1] = bits 8 and 9 from msi. See address 0x0da
+                 bit[2..3] = bits 8 and 9 from motorbackstep1 (a).
+                             See address 0x0db
+                 bit[4..5] = bits 8 and 9 from motorbackstep2 (b).
+                             See address 0x0dc
+                 bit[6]    = same value as bit[7] but doesn't seem to have any effect.
+                 bit[7]    = if 1 motor disabled; if 0 motor enabled
+
+0x0de    0x02    15 14 13 12 11 10 9 8 | 7-0
+                 bit[0..11]  = ?
+                 bit[12..15] = ?
+
+0x0df    0x01    7 6 5 4 3 2 1 0
+                 bit[0..3] = ?
+                 bit[4]    = Use motorcurves; 1=Yes;0=No
+                 bit[5..7] = ?
+
+0x0e0    0x01    step_size - 1
+                 step_size = (motorresolution * steptype) / (dummyline * resolution_y)
+
+0x0e1    0x03    last step of accurve.normalscan table
+0x0e4    0x03    last step of accurve.smearing table
+0x0e7    0x03    last step of accurve.parkhome table
+
+0x0ea    0x03    last step of deccurve.scanbufferfull table
+0x0ed    0x03    last step of deccurve.normalscan table
+0x0f0    0x03    last step of deccurve.smearing table
+0x0f3    0x03    last step of deccurve.parkhome table
+
+0x0f6    0x02    15 14 13 12 11 10 9 8 | 7-0
+                 bit[0..13]  = pointer to accurve.normalscan step table
+                 bit[14..15] = ?
+
+0x0f8    0x02    15 14 13 12 11 10 9 8 | 7-0
+                 bit[0..13]  = pointer to deccurve.scanbufferfull step table
+                 bit[14..15] = ?
+
+0x0fa    0x02    15 14 13 12 11 10 9 8 | 7-0
+                 bit[0..13]  = pointer to accurve.smearing step table
+                               (see address 0x0e4)
+                 bit[14..15] = ?
+
+0x0fc    0x02    15 14 13 12 11 10 9 8 | 7-0
+                 bit[0..13]  = pointer to deccurve.smearing step table
+                               (see address 0x0f0)
+                 bit[14..15] = ?
+
+0x0fe    0x02    15 14 13 12 11 10 9 8 | 7-0
+                 bit[0..13]  = pointer to deccurve.normalscan step table
+                               (see address 0x0ed)
+                 bit[14..15] = ?
+
+0x100    0x02    15 14 13 12 11 10 9 8 | 7-0
+                 bit[0..13]  = pointer to accurve.parkhome step table
+                               (see address 0x0e7)
+                 bit[14..15] = ?
+
+0x102    0x02    15 14 13 12 11 10 9 8 | 7-0
+                 bit[0..13]  = pointer to deccurve.parkhome step table
+                               (see address 0x0f3)
+                 bit[14..15] = ?
+
+0x104    0x20    Motor resource
+                 0xff, 0x90, 0xb0, 0xd4, 0xd0, 0x70, 0x50, 0x54, 0x30, 0x10,
+                 0x14, 0x38, 0x18, 0x0c, 0x08, 0x28, 0x04, 0x00, 0x20, 0x44,
+                 0x40, 0xe0, 0xc0, 0xc4, 0xa0, 0x80, 0x84, 0xa8, 0x88, 0x9c,
+                 0x98, 0xb8
+
+0x146    0x01    7 6 5 4 3 2 1 0
+                 bit[0..3] = Lamp pulse-width modulation frequency
+                 bit[4]    = timer to turn off lamp; 1 = enabled / 0 = disabled
+                 bit[5]    = In RTS8822BL-03A this bit referres to TMA_LAMP
+                             being 1:lamp turned on/0:lamp turned off
+                             The others don't use this bit being always 0
+                 bit[6]    = 1:lamp turned on/0:lamp turned off
+                             In RTS8822BL-03A this bit referres to FLB_LAMP. In
+                             this way, it's posible to switch on both lamps
+                             enabling bit[5] and bit[6]. In the other chipsets,
+                             this circunstance is not posible.
+                 bit[7]    = 1:if sensortype == CCD; 0:if sensortype == CIS
+
+0x147    0x01    time to turn off lamp = floor(minutes * 2.682163611980331)
+
+0x148    0x01    7 6 5 4 3 2 1 0
+                 bit[0..5] = Lamp pulse-width modulation duty cycle
+                 bit[6..7] = ?
+
+0x149    0x01    7 6 5 4 3 2 1 0
+                 bit[0..5] = even_odd_distance
+                 bit[6..7] = ?
+
+0x14a    0x01    7 6 5 4 3 2 1 0
+                 bit[0..5] = sensor_line_distance
+                 bit[6..7] = ?
+
+0x14b    0x01    7 6 5 4 3 2 1 0
+                 bit[0..5] = sensor_line_distance + even_odd_distance
+                 bit[6..7] = ?
+
+0x14c    0x01    7 6 5 4 3 2 1 0
+                 bit[0..5] = sensor_line_distance * 2
+                 bit[6..7] = ?
+
+0x14d    0x01    7 6 5 4 3 2 1 0
+                 bit[0..5] = (sensor_line_distance * 2) + even_odd_distance
+                 bit[6..7] = ?
+
+0x14e    0x01    7 6 5 4 3 2 1 0
+                 bit[0..3] = ?
+                 bit[4]    = ?
+                 bit[5..7] = ?
+
+0x154    0x01    7 6 5 4 3 2 1 0
+                 bit[0..3]  = ?
+                 bit[4..5] = Used in Motor_Change function. Value is never 00.
+                             I don't see any difference in scanner's behaviour.
+                 bit[6]    = ?
+                 bit[7]    = ?
+
+0x155    0x01    7 6 5 4 3 2 1 0
+                 bit[0]    = ?
+                 bit[1..3] = ?
+                 bit[4]    = 0:flb lamp; 1:tma lamp
+                 bit[5..7] = ?
+
+0x158    0x01    7 6 5 4 3 2 1 0
+                 bit[0..3] = if 0x0f, enables scanner buttons
+                 bit[4..7] = ?
+
+0x164    0x01    7 6 5 4 3 2 1 0
+                 bit[0..6] = ?
+                 bit[7]    = ?
+
+0x168    0x01    7 6 5 4 3 2 1 0
+                 Controls buttons status.
+                 HP3970 has 4 buttons in this order from left to right
+                 Buttons: [4] [3] [2] [1]
+                 Initially bits[0..5] are 1 so I guess this chipset supports up to 6 buttons
+                 bit[0]    = if 0, button [1] is pressed
+                 bit[1]    = if 0, button [2] is pressed
+                 bit[2]    = if 0, button [4] is pressed
+                 bit[3]    = if 0, button [3] is pressed
+                 bit[4..5] = always 1 in this scanner (support for two more buttons?)
+                 bit[6..7] = is always 0
+                 See address 0x16a
+
+0x169    0x01    7 6 5 4 3 2 1 0
+                 bit[0]    = ?
+                 bit[1]    = is tma lamp attached? 0 = yes, else 1 = no
+                 bit[2..7] = ?
+
+0x16a    0x01    7 6 5 4 3 2 1 0
+                 This register is 0 by default but its value changes when some button
+                 is released, setting its bit to 1. After reading this register, its
+                 value will be cleared by itself.
+                 bit[0]    = if 1, referring to button [1]
+                 bit[1]    = if 1, referring to button [2]
+                 bit[2]    = if 1, referring to button [4]
+                 bit[3]    = if 1, referring to button [3]
+                 bit[4..5] = probably supports two more buttons
+                 bit[6..7] = always 0
+                 See address 0x168
+
+0x16f    0x01    7 6 5 4 3 2 1 0
+                 bit[0..5] = ?
+                 bit[6]    = is lamp at home? if 1, yes it is.
+                 bit[7]    = ?
+
+0x187    0x01    7 6 5 4 3 2 1 0
+                 bit[0..3] = ?
+                 bit[4..7] = mclkioc
+
+0x19e    0x02    Low Binary Threshold (in lineart mode)
+0x1a0    0x02    High Binary Threshold (in lineart mode)
+
+0x1b4    0x02    15 14 13 12 11 10 9 8 | 7 6 5 4 3 2 1 0
+                 bit[0..13]  = Points to red gamma table (table_size * 0)
+                 bit[14..15] = ?
+
+0x1b6    0x02    15 14 13 12 11 10 9 8 | 7 6 5 4 3 2 1 0
+                 bit[0..13]  = Points to green gamma table (table_size * 1)
+                 bit[14..15] = ?
+
+0x1b8    0x02    15 14 13 12 11 10 9 8 | 7 6 5 4 3 2 1 0
+                 bit[0..13]  = Points to blue gamma table (table_size * 2)
+                 bit[14..15] = ?
+
+0x1ba    0x01    "pointer?"
+                 Registers 0x1ba, 0x1bb, 01bd and 0x1c0 seem to be four pointers
+                 to some buffer related to shading correction
+
+0x1bb    0x02    16 lower bits from "pointer?". See address 0x1bf (total 17 bits)
+0x1bd    0x02    16 lower bits from "pointer?". See address 0x1bf (total 18 bits)
+
+0x1bf    0x01    7 6 5 4 3 2 1 0
+                 bit[0]    = bit[16] of unknown data from address 0x1bb
+                 bit[1..2] = bits[16..17] of unknown data from address 0x1bd
+                 bit[3..4] = ? : hwdcfg->unk3
+                 bit[5..7] = ?
+
+0x1c0    0x03    23-16 | 15-8 | 7 6 5 4 3 2 1 0
+                 bit[0..19]  = "pointer?"
+                 bit[20..23] = See address 0x1c2 bit[4..7]
+
+0x1c2    0x03    23-16 | 15-8 | 7 6 5 4 3 2 1 0  // 7-0=0x1c2 ; 23-16=0x1c4
+                 bit[0..3]  = See address 0x1c0 bit[0..19]
+                 bit[4..7]  = 4 most significat bits from unknown value (c)
+                 bit[8..23] = 16 less significant bits from unknown value (c)
+                              (total = 20 bits size)
+                              [15-8 = value & 0xff |23-16 = (value >> 0x08) & 0xff]
+
+0x1c5    0x03    23 22 21 20 19 18 17 16 | 15-8 | 7-0  // 7-0=0x1c5 ; 23-16=0x1c7
+                 bit[0..19]  = ???
+                 bit[20..23] = ?
+
+0x1cf    0x01    7 6 5 4 3 2 1 0
+                 bit[0]    = ?
+                 bit[1]    = 0 : ShadingBase = 0x4000
+                             1 : ShadingBase = 0x2000
+                 bit[2]    = Enable white shading correction ? 1=Yes; 0=No
+                 bit[3]    = Enable black shading correction ? 1=Yes; 0=No
+                 bit[4..5] = 00 :  8 bits per channel
+                             01 : 12 bits per channel
+                             10 : 16 bits per channel
+                             11 : lineart mode
+                 bit[6]    = samplerate:
+                             0: Pixel-Rate
+                             1: Linear-Rate
+                 bit[7]    = ?
+
+0x1d0    0x01    7 6 5 4 3 2 1 0
+                 bit[0..3] = Gamma depth. Only bits 0, 2 and 3 are used to get table size.
+                             Bits [2..3]:
+                             00:  8 bits : table size = bit[0] + 0x100
+                             01: 10 bits : table size = bit[0] + 0x400
+                             10: 12 bits : table size = bit[0] + 0x1000
+                 bit[4..5] = ?
+                 bit[6]    = use gamma tables? 1 = yes; 0 = no
+                 bit[7]    = ?
+
+0x1e0    0x01    7 6 5 4 3 2 1 0
+                 bit[0..5] = ?
+                 bit[6..7] = ?
+
+
+
+From address 0xee00:
+
+This block of data seems to be 512 bytes size (to 0xefff) and most of them change during
+scanning execution. Offset starts from 0x600 (0xe800) instead of 0x001. 
+
+offset   bytes   bits
+------   -----   ----
+0x600    0x01    7 6 5 4 3 2 1 0
+                 bit[2]    = Seems to be some kind of lock set to 1 before making any
+                             bulk transfer and set to 0 afterwards.
+                             But when depth == 16, this bit is set to 0 before reading image
+
+0x601    0x02    number of motor steps divided by 2 (Read only)
+                 This value is set automatically when sending motor steps and changes while scanning.
+                 This register must be read directly to get some value. Trying to read
+                 the entire registers buffer will return 0 in this register.
+
+0x60a    0x01    7 6 5 4 3 2 1 0
+                 bit[0..1] = sensorchannelcolor[2]
+                 bit[2..3] = sensorchannelcolor[1]
+                 bit[4..5] = sensorchannelcolor[0]
+                 bit[6..7] = ?
+
+0x60b    0x01    7 6 5 4 3 2 1 0
+                 It seems to be used, prior to read image data from bulk in
+                 read_image function to calculate
+                 the amount of channels per dot.
+                 - 1º Driver reads channels_per_dot in address 0xe812 (bits[6..7])
+                 - 2º Sets Channel size (in bytes) to 1 by default, used later
+                      (see address 0x716)
+                 - 3º Reads 0xee0b (this register)
+                 - 4º if bit[6] = 1
+                      {
+                        channels_per_dot = 1
+                        sets channel_size var's value depending on bit[3]
+                      }
+                 bit[0..2] = ?
+                 bit[3]    = Channel size. 0 = 2 bytes size. 1 = 1 byte size
+                 bit[4]    = use compression? 0 = no; 1 = yes
+                 bit[5..7] = ?
+
+0x60c    0x03    23 22 21 20 19 18 17 16 | 15-8 | 7-0  // 7-0=0x60c ; 23-16=0x60e
+                 bit[0..17]  = channels_per_line (channels_per_dot * scan.width)
+                 bit[18..23] = ?
+
+
+From 0xef00 there are 8 groups of 32 bytes size (total 256 bytes)
+All groups have the same data even when any data of one group changes.
+
+offset   bytes   bits
+------   -----   ----
+0x708    0x01    7 6 5 4 3 2 1 0
+                 bit[0..2] = ?
+                 bit[3]    = Driver sets this bit to 0 before setting RAM type and
+                             after setting value, sets bit[3] to 1 again.
+                 bit[4]    = ?
+                 bit[5..7] = RAM type
+
+                 The same value exists in the other 7 groups located at addresses:
+                 0x728, 0x748, 0x768, 0x788, 0x7a8, 0x7c8, 0x7e8
+
+0x709    0x01    7 6 5 4 3 2 1 0
+                 bit[0]    = 1= device ready; 0=device not initialized yet
+                 bit[1..7] = ?
+
+                 The same value exists in the other 7 groups located at addresses:
+                 0x729, 0x749, 0x769, 0x789, 0x7a9, 0x7c9, 0x7e9
+
+0x710    0x03    23 22 21 20 19 18 17 16 | 15-8 | 7-0  // 7-0=0x710 ; 23-16=0x712
+                 bit[0..15]  = 16 lower bits from unknown value z of 20 bits size
+                 bit[16..19] = ?
+                 bit[20..23] = 4 higher bits from unknown value z
+
+                 The same value exists in the other 7 groups located at addresses:
+                 0x730, 0x750, 0x770, 0x790, 0x7b0, 0x7d0, 0x7f0
+
+0x716    0x04    31-24 | 23-16 | 15-8 | 7-0
+                 "This value" is used to get the amount of bytes of image data ready to be read
+                 taken from this operation:
+                 amount = ((channels_per_dot * 32) / (Channel size [bit[3] in 0x60b])) * ("This value")
+
+                 The same value exists in the other 7 groups located at addresses:
+                 0x736, 0x756, 0x776, 0x796, 0x7b6, 0x7d6, 0x7f6
+
+
+From address 0xfe00 to 0xfea7:
+
+offset   bytes   bits
+------   -----   ----
+0x006    0x02    ticks (?) From 0x0000 to 0xffff. Seems to make 0x200 ticks per second
+
+0x00f    0x01    ticks (?) From 0x00 to 0xff | Equal to 0xfe07 so 0x02 ticks per second
+
+0x011    0x01    7 6 5 4 3 2 1 0
+                 bit[0]    = USB type detected by the scanner
+                             0: USB1.1
+                             1: USB2.0
+                 bit[1..7] = ?
+
+0x014    0x02    ticks (?) From 0x0000 to 0x07ff
+
+0x039    0x01    7 6 5 4 3 2 1 0
+                 bit[0..6] = ?
+                 bit[7]    = SSCG mode
+
+0x03a    0x01    7 6 5 4 3 2 1 0
+                 bit[0..1] = ?
+                 bit[2..3] = SSCG clock control: 0=0.25%; 1=0.50%; 2=0.75%; 3=1.00%
+                 bit[4]    = SSCG enable? 0=NO , 1=Yes
+                 bit[5..7] = ?
+
+0x03c    0x01    Chip Model ID (this one returns 4)
+
+0x086    0x02    ticks (?) Same value as 0xfe06
+0x088    0x01    ticks when 0x087 is between 0xf0 and 0xfa, From 0xfe to 0xff, contains 0xf1. Any other cases is 0
+0x08f    0x01    ticks equal to 0xfe87
+0x094    0x02    ticks equal to 0xfe14
+0x097    0x01    tick = 00 -> 40 -> 00 ->..

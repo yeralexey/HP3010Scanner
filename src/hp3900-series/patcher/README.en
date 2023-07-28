@@ -1,0 +1,29 @@
+hp3900-patcher
+
+This application patches SANE project CVS version to include hp3900-series backend.
+
+- Download a SANE CVS version typing in console:
+
+  cvs -d:pserver:anonymous@cvs.alioth.debian.org:/cvsroot/sane login
+  cvs -z3 -d:pserver:anonymous@cvs.alioth.debian.org:/cvsroot/sane co sane-backends
+
+  Press enter when asked for the password.
+  More info about SANE CVS at:
+  http://www.sane-project.org/cvs.html
+
+- Make a copy of sane-backends. This copy will be used to patch files without changing
+  anything in the original folder.
+
+  cp -R sane-backends sane-backends-3900
+
+- Patch files with hp3900-patcher setting the folder where sane is and the folder where
+  hp3900-series source files are:
+
+  hp3900-patcher --sane <path/sane-backends-3900> --from <path/hp3900> --verbose
+
+- If you wish, you can create a diff file (a patch) in this way:
+
+  diff -Nuar <path to original sane-backends folder> <path to sane-backends-3900> > file.diff
+
+
+Jonathan Bravo Lopez

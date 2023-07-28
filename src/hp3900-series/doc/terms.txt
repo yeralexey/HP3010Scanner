@@ -1,0 +1,15 @@
+Author : Jonathan Bravo Lopez <jkdsoft@gmail.com>
+Title  : terms located at hp3900-series project
+Version: 25.12.2006
+
+ADCCLKP : Analog Device type: ADC Converter sampling clock
+CCD     : Charge Coupled Device Sensor
+CDSS    : Correlated-Double-Sample Source
+CIS     : Contact Image Sensor
+CVTRP[x]: Linear image sensor transfer gates
+CTPC    : Line Exposure Time?
+MSI     : Multi-Spectral Imager?
+PAG     : Pre-Amplifier Gain
+PWM     : Pulse-Width Modulation
+SSCG    : Spread Spectrum Clock Generator
+VGA     : Variable Gain Amplifier
