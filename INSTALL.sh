@@ -21,7 +21,10 @@ menu_count=0
 menu_root=""
 menu_margin=""
 
-# functions
+## FUNCTIONS
+
+# №1. Displaying a header at the beginning of the installation script.
+# The purpose is to provide a visually appealing and informative header at the beginning of the script's execution
 function header()
 {
 	# clear screen
@@ -32,13 +35,19 @@ function header()
 	echo -en $GRAY"\n"
 }
 
+
+# №2. Essentially displays the available menu options for installation, 
+# showing their corresponding numbers and names. 
 function menu_show()
 {
-	if test $menu_count -gt 0;
+	# check if flag of menu count is freater than 0
+	if test $menu_count -gt 0; 
 	then
 		a=0
 
+		# prints first menu option
 		echo "$menu_margin""1 - Others (Compile sources)"
+		# iterates over availiable menu options
 		while [ $a -lt $menu_count ]; do
 			a=$[$a + 1]
 			b=$[$a + 1]
@@ -47,36 +56,62 @@ function menu_show()
 	fi
 }
 
+
+# №3. Initializes several arrays (menu_string, menu_path, menu_bin, menu_la, menu_rules, menu_man) 
+# and a counter variable menu_count.
 function menu_create()
 {
 	menu_count=0
 
+	# use find command to search for files named "menu" within the directory specified by the variable $menu_root
 	for i in $(find "$menu_root" -name "menu");
 	do
 		# is there a menu option?
+		# for each "menu" file found, read the content of the file and 
+		# extracts specific information using grep, cut, and sed commands.
 		tag="$(cat $i | grep -e "^MENU:" | cut -d: -f2 | sed -e 's/^ *//')"
 
+		# conditional statement that checks whether the variable $tag is non-empty (i.e., has a value)
 		if test -n "$tag";
 		then
 			# seems to be valid, add path
 			menu_count=$[$menu_count + 1]
 
+			# the name or description of the menu option
 			menu_string[$menu_count]="$tag"
+			# the path of the directory containing the "menu" file
 			menu_path[$menu_count]="$(dirname $i)"
+			# the name of the binary file associated with the menu option
+				# syntax break down:
+				# `menu_bin[$menu_count]=:` assigns a value to the array element menu_bin at the index specified by the value of the variable menu_count
+				# `$(...):` a command substitution. The enclosed commands are executed, and their output is substituted back into the main command
+				# `cat $i:` is used to read the contents of the file specified by the variable $i.
+				# `grep -e "^BIN:":` searches for lines in the output of cat $i that start with the string "BIN:", `-e`` option is used to specify the pattern to search for
+				# `cut -d: -f2:` extracts the second field from each line in the output of grep, `-d:` option sets the delimiter to ":" (colon), and the -f2 option specifies to select the second field
+				# `sed -e 's/^ *//':` removes leading spaces from the output of cut, regular expression 's/^ *//' matches and substitutes any leading spaces at the beginning of each line with an empty string
+			# the name of the binary file associated with the menu option
 			menu_bin[$menu_count]="$(cat $i | grep -e "^BIN:" | cut -d: -f2 | sed -e 's/^ *//')"
+			# the name of the library file associated with the menu option
 			menu_la[$menu_count]="$(cat $i | grep -e "^LA:" | cut -d: -f2 | sed -e 's/^ *//')"
+			# the name of the rules file associated with the menu option
 			menu_rules[$menu_count]="$(cat $i | grep -e "^RULES:" | cut -d: -f2 | sed -e 's/^ *//')"
+			# the name of the man page file associated with the menu option
 			menu_man[$menu_count]="$(cat $i | grep -e "^MAN:" | cut -d: -f2 | sed -e 's/^ *//')"
 		fi
 	done;
 
 }
 
+# №4. Displaying the help menu with information about the script's usage and available command-line arguments, 
+# provides details on how to use the script and what options are available for the installation process.
 function install_help()
 {
+	# print emty line
 	echo
+	# display current (./INSTALL.sh )script name followed by word `arguments` in square brackets
 	echo "$0 [arguments]"
 	echo
+	#  print the section header for the arguments in light gray color, followed by two new lines., etc.
 	echo -en $LIGHT_GRAY"Arguments:\n\n"
 	echo -en $LIGHT_GRAY"--type <#>: "$GRAY"Selects application to install. Posible values are:\n"
 	echo "       1: Stand-alone application"
@@ -84,21 +119,26 @@ function install_help()
 	echo
 	echo -en $LIGHT_GRAY"--distro <#>: "$GRAY"Selects distro to install binaries instead of compiling sources.\n"
 
+	# set the menu_margin variable to add indentation in the menu display
 	menu_margin="       "
 
+	# set menu_root variable to the path of the stand-alone application binaries
 	menu_root=$INS_PATH_BIN_STDALONE
+	# call menu_create function to update menu_count variable
 	menu_create
 
+	# checks if there are any stand-alone application binaries available by cheching menu_count variable
 	if test $menu_count -gt "0";
 	then
 		echo "       Posible values for Stand-alone application:"
 		menu_show
 	else
 		echo
-		echo "       There aren't binaries for Stand-alone application. You must compile proyect"
+		# TODO could be a mistake, because i receive this string even with compiles binnaries
+		echo "       There aren't binaries for Stand-alone application. You must compile project"
 	fi
 
-	# show options for SANE backend
+	# show options for SANE backend, same to previous
 	menu_root=$INS_PATH_BIN_SANE
 	menu_create
 
@@ -109,7 +149,7 @@ function install_help()
 		menu_show
 	else
 		echo
-		echo "       There aren't binaries for SANE backend. You must compile proyect"
+		echo "       There aren't binaries for SANE backend. You must compile project"
 	fi
 
 	echo
@@ -119,12 +159,15 @@ function install_help()
 	exit 0
 }
 
+# №5. Handling the user's selection of the installation type (stand-alone application or SANE Backend), 
+# if the install_type is not already set, it prompts the user to choose between the two options,
+# sets the install_type variable based on the user's input.
 function installation()
 {
 	# if install_type is already set, skip this step
 	if test $install_type -eq "-1";
 	then
-		install_type=2; # by default SANE Backend
+		install_type=1; # by default Stand-alone backend
 
 		echo
 		echo -en $GRAY"Select application you wish to install:\n"
@@ -132,14 +175,20 @@ function installation()
 		echo "2 - SANE Backend"
 		echo
 		echo -en $LIGHT_GRAY"Install type [$install_type]: "$GRAY
+
+		# reads the user's input and stores it in the variable ins_type
 		read ins_type
 
+		# checks if the user's input is not empty
 		if test ! -z $ins_type;
 		then
+			# checks if the user's input is greater than zero
 			if test $ins_type -gt "0";
 			then
+				# checks if the user's input is less than 3
 				if test $ins_type -lt "3";
 				then
+					# sets the install_type variable to the user's input, which represents the chosen installation type
 					install_type=$ins_type
 				fi
 			fi
@@ -153,11 +202,15 @@ function installation()
 	esac
 }
 
+# №6. Is responsible for determining the Linux distribution running on the system, checks for specific files or 
+# directories commonly found on different Linux distributions to identify the distribution type.
 function distro_detect()
 {
+	# file is commonly found on SuSE (openSUSE) Linux systems, if exists, distro variable is set to 5
 	if test -e /etc/suseRegister.conf
 	then
 		distro=5 # SuSE
+	# if the file exists and contains the word "ubuntu" (case-insensitive), distro variable is set to 3
 	elif test -e /etc/lsb-release;
 	then
 		grep -i ubuntu /etc/lsb-release > /dev/null
@@ -165,15 +218,20 @@ function distro_detect()
 		then
 			distro=3 # Ubuntu
 		fi
+	#  if the file /etc/debian_version exists...
 	elif test -e /etc/debian_version;
 	then
 		distro=2 # Debian
+	#  if the file /etc/fedora-release exists...
 	elif test -e /etc/fedora-release;
 	then
 		distro=4 # Fedora
 	fi
 }
 
+
+# №7. Is responsible for allowing the user to select a Linux distribution for installation, used to determine 
+# whether pre-compiled binaries for the specified distribution are available or if the user needs to compile the sources.
 function distro_select()
 {
 	# first generate menu to get proper config about desired application
@@ -234,11 +292,15 @@ function distro_select()
 		else
 			# compile project
 			echo
-			echo -en $WARNING"Official binaries not found. Must use compiled one...\n"$GRAY
+			# Thats what i receive
+			echo -en $WARNING"test Official binaries not found. Must use compiled one...\n"$GRAY
 		fi
 	fi
 }
 
+
+# №8. Checking whether the required folders for installing the SANE backend exist on the system, 
+# provides information about the expected paths and verifies if they exist.
 function sane_detect_folders()
 {
 	check=0
@@ -265,6 +327,8 @@ function sane_detect_folders()
 	fi
 }
 
+# №9. Installing the SANE backend after 
+# compilation.
 function sane_install_compilation()
 {
 	sPATH=$INS_PATH_BIN_SANE/others
@@ -365,6 +429,8 @@ function sane_install_compilation()
 	echo -en $LIGHT_GRAY"- Installation ends succesfully...\n"$GRAY
 }
 
+# №10. handles the installation of the SANE backend, 
+# begins by checking path variables using the sane_detect_folders() function.
 function sane_install()
 {
 	# lets check path variables first
@@ -485,19 +551,47 @@ function sane_install()
 	fi
 }
 
-
+# №11. The stdalone_install() function copies the necessary files of the stand-alone application to their 
+# respective installation directories. It handles two scenarios: when the binaries are compiled from source 
+# (distro=1) and when they are pre-compiled (distro>1). It checks for the existence of the binary 
+# file and copies it to the appropriate destination. It also copies the man page and udev rules, 
+# and creates a symlink for the udev rules file.
 function stdalone_install()
 {
+	# a variable containing a message reminding the user to execute the installation as root
 	MSGROOT="Be sure that you execute installation as root"
 
+	# case statement to handle two scenarios based on the distro value
 	case $distro in
 	1) # others
+		#for the case where the stand-alone application needs to be compiled from source, the paths for the binary, 
+		# kmdr file, man file, and udev rules file are set based on the paths specified in the config.sh file.
 		binfile=$INS_PATH_BIN_STDALONE"/others/hp3900"
 		kmdrfile=$INS_PATH_BIN_STDALONE"/others/hp3900.kmdr"
 		manfile=$INS_PATH_BIN_STDALONE"/others/hp3900.1"
 		rulesfile=$INS_PATH_BIN_STDALONE"/others/hp3900.rules"
 
-		# check if binary already exists. If don't, compile it
+
+		# check if binary already exists, but option force recompile is enabled
+		# trigger the compilation process by running ./COMPILE.sh --type 1 --noheader (added modification)
+
+		if [ -e "$binfile" ]; then
+			if [ "$force_recompile" -gt 0 ]; then # force_recompile can be found in ./scripts/config.sh
+				echo -en "$WARNING""Binaries were found, but forced recompilation is enabled,\
+				 check ./scripts/config.sh for more, recompiling...\n""$GRAY"
+				./COMPILE.sh --type 1 --noheader
+
+				if [ $? -ne "0" ]; then
+					# compile failed, exit
+					echo -en "$ERROR""Aborting installation process ...\n"
+					exit 1
+				fi
+			fi
+		fi
+
+		# check if binary don't exists, compile it, trigger the compilation process by running 
+		# ./COMPILE.sh --type 1 --noheader (inherited from original code)
+
 		if !(test -e $binfile);
 		then
 			echo -en $WARNING"Binaries not found. Must compile first...\n"$GRAY
@@ -510,6 +604,7 @@ function stdalone_install()
 			fi
 		fi
 		;;
+
 
 	*) # compiled binaries
 		# default paths
@@ -595,6 +690,8 @@ function stdalone_install()
 		echo -en $ERROR"File $(basename $binfile) not found at $(dirname $binfile)/\n"
 	fi
 }
+
+## MAIN SEQUENCE
 
 # show installer header
 header

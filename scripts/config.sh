@@ -32,8 +32,11 @@ UPD_PATH_TMP_SANE="./src/sane_temp"
 CMP_LOG_SANE="sanecomp.log"
 
 # default values for next processes
-distro=-1       # 1=none, 2=debian, 3=ubuntu, 4=fedora, 5=suse
-install_type=-1 # 1=hp3900, 2=SANE
-update_type=-1  # 1=hp3900, 2=SANE, 3=Both
-compile_type=-1 # 1=hp3900, 2=SANE, 3=Both
-info_type=0     # 0=All, 1=hp3900_bin_vrs, 2=hp3900_src_vrs, 3=Sane_src_vrs
+distro=-1         # 1=none, 2=debian, 3=ubuntu, 4=fedora, 5=suse
+install_type=-1   # 1=hp3900, 2=SANE
+update_type=-1    # 1=hp3900, 2=SANE, 3=Both
+compile_type=-1   # 1=hp3900, 2=SANE, 3=Both
+info_type=0       # 0=All, 1=hp3900_bin_vrs, 2=hp3900_src_vrs, 3=Sane_src_vrs
+
+# if Stand-alone application is compiled, if force_recompile is "on" - all previously compiled files will be overwritten
+force_recompile=1 # 0 is "off", any value above 0 is "on"

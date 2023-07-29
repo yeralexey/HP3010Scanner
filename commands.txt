@@ -1,0 +1,3 @@
+sudo ./INSTALL.sh --type 1
+
+hp3900 --left 10 --width 200 --top 5 --height 100 --res 2400
